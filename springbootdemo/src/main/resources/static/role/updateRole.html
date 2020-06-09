@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>角色数据列表</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link href="/static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="/static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="/static/css/animate.css" rel="stylesheet">
+    <link href="/static/css/style.css?v=4.1.0" rel="stylesheet">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css">
+    <!-- 引入组件库
+     -->
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content  animated fadeInRight" id="app">
+    <div class="row">
+        <div class="ibox">
+            <div class="ibox-content">
+                <el-container>
+                    <el-header style="text-align: left; font-size: 20px;display: none;">
+                    </el-header>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-title">
+                                    <h5>角色数据列表</h5>
+                                </div>
+                            </div>
+
+                            <!-- 表单 -->
+                            <el-form :model="form" ref="form" label-width="180px">
+
+                                <el-form-item label="角色id" class="col-sm-5 control-label">
+                                    <el-input v-model="form.id"
+                                              placeholder="角色id" disabled></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="角色类型" class="col-sm-5 control-label">
+                                    <el-input v-model="form.roleTypeName"
+                                              placeholder="角色类型"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="修改时间" class="col-sm-5 control-label">
+                                    <div class="block">
+                                        <el-date-picker
+                                                v-model="form.updateTime"
+                                                type="date"
+                                                value-format="yyyy-MM-dd HH:mm:ss"
+                                                placeholder="修改时间">
+                                        </el-date-picker>
+                                    </div>
+                                </el-form-item>
+
+                                <el-form-item label="登录时间" class="col-sm-5 control-label">
+                                    <div class="block">
+                                        <el-date-picker
+                                                v-model="form.loginTime"
+                                                type="date"
+                                                value-format="yyyy-MM-dd HH:mm:ss"
+                                                placeholder="登录时间" disabled>
+                                        </el-date-picker>
+                                    </div>
+                                </el-form-item>
+
+                                <el-form-item label="创建时间" class="col-sm-5 control-label">
+                                    <div class="block">
+                                        <el-date-picker
+                                                v-model="form.createTime"
+                                                type="date"
+                                                value-format="yyyy-MM-dd HH:mm:ss"
+                                                placeholder="创建时间" disabled>
+                                        </el-date-picker>
+                                    </div>
+                                </el-form-item>
+
+                                <el-form-item label="描述" class="col-sm-5 control-label">
+                                    <el-input
+                                            type="textarea"
+                                            :autosize="{ minRows: 6, maxRows: 10}"
+                                            placeholder="描述"
+                                            v-model="form.roleDescribe">
+                                    </el-input>
+                                </el-form-item>
+
+                                <el-form-item class="col-sm-5" style="text-align: right;">
+                                    <el-button type="primary" @click="handleExecute">增加</el-button>
+                                    <el-button @click.native="back">返回</el-button>
+                                </el-form-item>
+
+                            </el-form>
+
+                        </div>
+                    </div>
+                </el-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script src="../js/jquery.min.js?v=2.1.4"></script>
+<script src="../js/bootstrap.min.js?v=3.3.6"></script>
+
+<!-- Peity -->
+<script src="../js/plugins/peity/jquery.peity.min.js"></script>
+<!-- jqGrid -->
+<script src="../js/plugins/jqgrid/i18n/grid.locale-cn.js?0820"></script>
+<script src="../js/plugins/jqgrid/jquery.jqGrid.min.js?0820"></script>
+<!-- 自定义js -->
+<script src="../js/content.js?v=1.0.0"></script>
+
+<script src="../js/vue.min.js"></script>
+<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+
+
+<!-- Page-Level Scripts -->
+<script>
+    var app = new Vue({
+        //使用ID绑定上方某div块
+        el: '#app',
+
+        //下方都是数据
+        data: {
+
+
+            form:{
+                id:'',
+                updateTime:'',
+                loginTime:'',
+                roleTypeName:'',
+                createTime:'',
+                roleDescribe:''
+            }
+
+
+        },
+
+
+
+        methods: {
+
+
+
+            back() {
+                window.location.href = "./roleList.html"
+            },
+
+
+
+            //保存
+            handleExecute() {
+                this.$confirm('确认增加, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.execute();
+                this.reset();
+                this.$message({
+                    type: 'success',
+                    message: '增加成功!'
+                });
+            }).catch(() => {
+                    this.$message({
+                    type: 'info',
+                    message: '已取消增加'
+                });
+            });
+            },
+
+
+
+            execute() {
+                var reqData  = {
+                    id:this.form.id,
+                    loginTime:this.form.loginTime,
+                    createTime:this.form.createTime,
+                    roleTypeName:this.form.roleTypeName,
+                    updateTime:this.form.updateTime,
+                    roleDescribe:this.form.roleDescribe
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    //url从content.js文件获得
+                    url: 'http://localhost:8080/roleController/addRole',
+                    contentType: "application/json; charset=UTF-8",
+                    data:JSON.stringify(reqData),
+                    dataType: 'json',
+                    //成功后执行
+                    success: function (data) {
+                        console.log(data)
+                    },
+                    error: function () {
+                    }
+                })
+
+            },
+
+
+
+            //将表单项置为空
+            reset() {
+                for (let key in this.form) {
+                    this.form[key] = "";
+                }
+            },
+
+
+
+            // 负责初始化
+            init() {
+               //从本地数据库取的标签为‘data’的数据
+                var json=localStorage.getItem('data');
+                //转换回obj
+                var jsonObj=JSON.parse(json);
+                console.log('jsonObj',jsonObj);
+                //赋值
+                this.form.id = jsonObj.id,
+                    this.form.roleTypeName = jsonObj.roleTypeName,
+                    this.form.roleDescribe = jsonObj.roleDescribe,
+                    this.form.updateTime = jsonObj.updateTime,
+                    this.form.loginTime = jsonObj.loginTime,
+                    this.form.createTime = jsonObj.createTime
+            }
+
+
+
+        },
+
+
+
+        // 1.初始化调用方法，目的是从通过接口从数据库调入原始选项数据
+        created() {
+        }
+
+
+
+    })
+
+
+
+</script>
+</body>
+
+<style type="text/css">
+    .canvas-container {
+        margin-left: 50px;
+        margin-right: 50px;
+        /* width: 100%; */
+        height: auto;
+        background-color: #666666;
+        box-sizing: border-box;
+    }
+    .canvas-img {
+        width: 100%;
+        height: auto;
+    }
+    .canvas-body {
+        position: absolute;
+        z-index: 999;
+    }
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+</style>
+</html>

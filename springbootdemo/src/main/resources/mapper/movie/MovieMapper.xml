@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.repository.movie.MovieRepository">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.demo.model.movie.MovieModel" id="MovieMap">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.demo.model.demo.DemoInfo" id="DemoMap">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.demo.model.movie.MovieInfo" id="MovieInfoMap">
+        <id column="id" property="id"/>
+        <result column="movie_name" property="movieName"/>
+        <result column="score" property="score"/>
+        <result column="movie_describe" property="movieDescribe"/>
+        <result column="poster_path" property="posterPath"/>
+        <result column="online_time" property="onlineTime"/>
+        <result column="entry_time" property="entryTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="poster_old_path" property="posterOldPath"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 按 id 查询 t_demo 的信息 -->
+    <select id="queryMovieById" parameterType="int" resultType="com.demo.model.movie.MovieModel" resultMap="MovieMap">
+        select * from t_demo where 1=1 and id = #{id}
+    </select>
+
+    <!-- 向 t_demo 中添加信息 -->
+    <select id="addDemo" parameterType="com.demo.model.demo.DemoInfo" resultType="java.lang.Object" resultMap="DemoMap">
+        insert into t_demo(name) values (#{name})
+    </select>
+
+    <!-- 按 id 查询电影列表中的信息 -->
+    <select id="findMovieById" parameterType="Integer" resultType="com.demo.model.movie.MovieInfo" resultMap="MovieInfoMap">
+         select * from ai_movie where 1=1 and id = #{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+
+    <title> hAdmin- 主页</title>
+
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+
+    <link rel="shortcut icon" href="./favicon.ico"> <link href="./css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="./css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="./css/animate.css" rel="stylesheet">
+    <link href="./css/style.css?v=4.1.0" rel="stylesheet">
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+
+</head>
+<!-- class="fixed-sidebar full-height-layout gray-bg" -->
+<body class="full-height-layout gray-bg" >
+<div class="wrapper wrapper-content" id="app" >
+    <div class="row text-center">
+        <el-row>
+            <ul class="linkUl">
+                <li v-for="(item,index) in tableData">
+                    <el-col :span="6">
+                        <div class="textWrap" @click="redirectPage(item.url)" :title="('账号：' + item.account)">
+                            <!-- <i class="fa fa-users" aria-hidden="true" style="font-size:30px;color:#fff;"></i> -->
+                            <img :src="item.src" width="50" height="50" />
+                            <p>{{item.cname}}</p>
+                        </div>
+                    </el-col>
+                </li>
+            </ul>
+        </el-row>
+
+
+
+        <!-- <div class="col-xs-3"  v-for="(item,index) in tableData"  :key="item.cnname" :title="('账号：' + item.account)">
+            <div class="panel padder-v item bg-info" @click="redirectPage(item.url)" >
+                <br><br><br><br>
+                <div class="h3 text-fff font-thin h3" style="font-family:'Times New Roman',Georgia,Serif;font-weight: bold;">
+                    {{item.cnname}}
+
+                    <br><br>
+                    <br><br><br><br>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- <div class="col-xs-3">
+            <div class="panel padder-v item bg-primary" @click="redirectPage(tableData[1].url)">
+                <br><br><br><br>
+                <div class="h3 text-fff font-thin h3" style="font-family:'Times New Roman',Georgia,Serif;font-weight: bold;">
+                    智能工厂
+                </div>
+                <br><br>
+                <br><br><br><br>
+            </div>
+        </div> -->
+
+        <!-- <div class="col-xs-3">
+            <div class="panel padder-v item ">
+                <br><br><br><br>
+                <div class="h3 text-muted font-thin h3 " style="font-family:'Times New Roman',Georgia,Serif;font-weight: bold;">
+                    智能大数据平台
+                    <br><br>
+                    <br><br><br><br>
+                </div>
+            </div>
+        </div> -->
+        <!-- <div class="col-xs-3">
+            <div class="panel padder-v item ">
+                <br><br><br><br>
+                <div class="h3 text-muted font-thin h3 " style="font-family:'Times New Roman',Georgia,Serif;font-weight: bold;">
+                    大数据控制中心
+                </div>
+                <br><br>
+                <br><br><br><br>
+            </div>
+        </div> -->
+
+
+    </div>
+
+
+
+    <div >
+        <div class="ibox">
+            <div class="ibox-title"><h5>快速链接</h5></div>
+            <div class="ibox-content" v-loading="loading" element-loading-text="正在查询中">
+                <div class="jqGrid_wrapper">
+                    <el-table :data="tableData2" stripe border style="width:100%;" height="516">
+                        <el-table-column show-overflow-tooltip
+                                         :prop="items.headKey" :key='index' v-for='(items , index) in column'
+                                         :label="items.headName" :width="items.width" :align="items.align">
+                            <template slot-scope="scope">
+                                <a v-if="items.headKey === 'url'" :href="scope.row[items.headKey]" target="_blank">{{scope.row[items.headKey]}}</a>
+                                <p v-else>{{scope.row[items.headKey]}}</p>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script src="./js/jquery.min.js?v=2.1.4"></script>
+<script src="http://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="./js/bootstrap.min.js?v=3.3.6"></script>
+<script src="./js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="./js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="./js/plugins/layer/layer.min.js"></script>
+
+<!-- 自定义js -->
+<script src="./js/hAdmin.js?v=4.1.0"></script>
+
+<!-- 第三方插件 -->
+<script src="./js/plugins/pace/pace.min.js"></script>
+
+<script src="./js/content.js?v=1.0.0"></script>
+<script src="./js/vue.min.js"></script>
+<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+
+<script>
+    var url = 'http://192.168.1.102';
+    //var url = 'http://172.16.104.39'
+    //var url = 'http://192.168.205.122';
+    var app = new Vue({
+        //使用ID绑定上方某div块
+        el: '#app',
+
+        //下方都是数据
+        data: {
+            loading: false,
+
+            // listUrl: (baseUrl + '/ai/convention/algorithm/'),
+
+            tableData: [// 告警系统，车辆管理系统，一脸通
+                // {cname:'人工智能平台',src:'./img/indexNav/os_platform.png',url:'http://192.168.205.122:9600/IntelligentPlant/hAdmin/index_viewbase.html',background:'',account:'无',remark:'中科智云算法引擎接口'},
+                // {cname:'智能工厂' ,src:'./img/indexNav/factory.png'   ,url:'http://192.168.205.122:9600/IntelligentPlant/hAdmin/index.html',account:'无',remark:'智能工厂功能清单'},
+                {cname:'告警系统',src:'./img/indexNav/system.png',url:url+':3700/index_viewbase.html',account:'admin/123456',remark:''},
+                {cname:'车辆管理系统',src:'./img/indexNav/car.png',url:'http://192.168.205.210',account:'admin/ABC123',remark:''},
+                // {cnname:'智能工厂看板',url:'http://192.168.205.122:9700/index.html#/index',account:'',remark:'智能工厂看板'},
+                // {cnname:'中科智云云端一脸通',url:'http://k-facepass.kankanai.com.cn',account:'prince/admin123',remark:''},http://192.168.1.102:10100/#/dashboard
+                {cname:'一脸通',src:'./img/indexNav/face.png',url:'http://192.168.205.225:20080',account:'root/admin123',remark:''},
+                // {cname:'智能工厂',src:'./img/indexNav/factory.png',url:''},http://192.168.205.122:10100/
+                {cname:'系统管理',src:'./img/indexNav/icon-cloud.png',url:'http://192.168.1.102:10100/#/dashboard',account:'admin/123456',remark:''},
+                // {cname:'大数据控制中心',src:'./img/indexNav/controlList.png',url:'',account:''},
+                {cname:'视频安全管控',src:'./img/indexNav/Security-Camera.png',url:'https://192.168.1.199:20000/chrois/dashboard',account:'admin/Zhongjian@2019'},
+                {cname:'智能工厂看板',src:'./img/indexNav/factory.png',url:'http://192.168.1.102:9700/',account:''},
+				
+
+            ],
+
+            column: [
+                {headName: '名称', headKey: 'cname',width:'300px' },
+                {headName: '地址', headKey: 'url'},
+                {headName: '账号', headKey: 'account',width:'200px'},
+                {headName: '说明', headKey: 'remark',width:'200px'}
+            ],
+            tableData2:[
+                {
+                    cname:'Rest API 列表',
+                    url:url+':9600/doc.html?plus=1',
+                    account:'',
+                    remark:''
+                },
+                {
+                    cname:'Rest API 列表 swagger-mg-ui',
+                    url:url+':9600/document.html',
+                    account:'',
+                    remark:''
+                },
+                {
+                    cname:'Rest API 列表 Swagger-UI',
+                    url:url+':9600/swagger-ui.html',
+                    account:'',
+                    remark:''
+                },
+                {
+                    cname:'JPA Data Rest API列表',
+                    url:url+':9600/api/jpa/v1',
+                    account:'',
+                    remark:''
+                },
+                {
+                    cname:'Spring Boot Actuator',
+                    url:url+':9600/actuator',
+                    account:'',
+                    remark:''
+                },
+                {
+                    cname:'h2数据库',
+                    url:url+':9600/h2-console',
+                    account:'',
+                    remark:''
+                },
+                {
+                    cname:'安防系统测试环境登录页面',
+                    url:'http://192.168.205.122:10080',
+                    account:'',
+                    remark:''
+                },
+                {
+                    cname:'消息队列-RabbitMQ',
+                    url:'http://192.168.1.185:15672',
+                    account:'admin/cnbm123456',
+                    remark:''
+                }
+            ]
+        },
+        methods: {
+            redirectPage: function(url) {
+                console.log('url==',url);
+                
+                // this.$emit(redirectPage1,url)
+                // window.parent.redirectPage1(url);
+                window.parent.postMessage(url,'*');
+                // window.location.href = url;
+            },
+            // 查询数据
+            reloadTableData: function() {
+                // this.loading = true;
+                // _this = this;
+                // $.ajax({
+                //     type: 'GET', url: this.listUrl, contentType: "application/json;charset=UTF-8", dataType: 'json',
+                //     //成功后执行
+                //     success: function (res) {
+                //         _this.tableData = res.data.dataList;
+                //         _this.loading = false;
+                //     },
+                //     error: function () {
+                //         _this.loading = false;
+                //     }
+                // })
+            },
+        },
+        //1.初始化调用方法，目的是从通过接口从数据库调入原始选项数据
+        mounted: function() {
+            // this.reloadTableData()
+        }
+    })
+
+
+</script>
+</body>
+<style type="text/css">
+    /* 防止pre撑破网页 */
+    pre.pre-show-style {
+        /* overflow-y: auto;
+        overflow: auto;
+        overflow-x: auto; */
+        white-space: pre-wrap; /* css-3 */
+        white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+        white-space: -pre-wrap; /* Opera 4-6 */
+        white-space: -o-pre-wrap; /* Opera 7 */
+        word-wrap: break-word; /* Internet Explorer 5.5+ */
+        background: #303133;
+        color: white;
+        border: 0px;
+    }
+    div.panel:hover{
+        cursor:pointer
+    }
+    div.panel{
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar{
+
+        display:none;
+    }
+    .linkUl{
+        list-style: none;
+        overflow: hidden;
+        margin: 0 15px;
+        padding: 10px 0;
+        background: #fff;
+        margin-bottom: 15px;
+        border:1px solid #ddd;
+    }
+    .linkUl .textWrap{
+        width:200px;
+        margin:10px auto;
+        padding:10px;
+        text-align: center;
+        background:#38acfe;
+        font-size:20px;
+        border-radius: 10px;
+        color:#fff;
+        cursor: pointer;
+    }
+    .linkUl .textWrap p{
+        margin:10px 0;
+    }
+</style>
+</html>

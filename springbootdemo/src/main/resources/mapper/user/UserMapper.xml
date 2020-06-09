@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.repository.user.UserRepository">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.demo.model.user.UserInfo" id="UserMap">
+        <id column="id" property="id"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_password" property="userPassword"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="login_time" property="loginTime"/>
+        <result column="user_describe" property="userDescribe"/>
+        <result column="user_path" property="userPath"/>
+    </resultMap>
+
+    <!--条件查询-->
+    <sql id="userWhere">
+       <where>
+           <!-- 用户名模糊查询 -->
+           <if test="userName != null and userName != ''">
+               user_name like concat('%', #{userName} ,'%')
+           </if>
+           <!-- 密码模糊查询 -->
+           <if test="userPassword != null and userPassword != ''">
+               user_password like concat('%', #{userPassword} ,'%')
+           </if>
+       </where>
+    </sql>
+
+    <!--根据 用户名 查询 相关的用户信息-->
+    <select id="findUserId" parameterType="string" resultType="com.demo.model.user.UserInfo" resultMap="UserMap">
+        select * from ai_user where 1=1 and user_name = #{username}
+    </select>
+
+    <!--查询总条数-->
+    <select id="findUserCount" resultType="java.lang.Long">
+        select count(*) from ai_user
+        <include refid="userWhere"></include>
+    </select>
+
+    <!--获取分页列表-->
+    <select id="findUser" resultType="java.util.List" resultMap="UserMap" parameterType="com.demo.model.user.UserInfo">
+        select t.* from (
+            select * from ai_user
+            <include refid="userWhere"></include>
+        ) t limit #{startPos}, #{pageSize}
+    </select>
+</mapper>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>角色数据列表</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link href="../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css?v=4.1.0" rel="stylesheet">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.12.0/lib/theme-chalk/index.css">
+    <!-- 引入组件库
+     -->
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content  animated fadeInRight" id="app">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5>角色数据列表</h5></div>
+            <div class="ibox-content">
+                <!-- 搜索过滤框 -->
+                <el-form :inline="true" :model="filter" class="demo-form-inline">
+                    <el-form-item label="角色类型">
+                        <el-input v-model="filter.roleTypeName" placeholder="角色类型" maxlength="10" show-word-limit></el-input>
+                    </el-form-item>
+
+                    <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+                    <el-button class="filter-item" type="info" icon="el-icon-search" @click="handleReset">重置</el-button>
+                    <el-button class="filter-item" type="success" icon="el-icon-search" @click="handleAdd">新增</el-button>
+                </el-form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="ibox" >
+            <div class="ibox-title"><h5>用户数据表信息</h5></div>
+            <div class="ibox-content"  >
+                <div class="jqGrid_wrapper">
+                    <el-table :data="tableData" stripe border style="width:100%" height="616"  v-loading="loading" element-loading-text="正在查询中">
+                        <el-table-column type="index" width="50"></el-table-column>
+
+                        <el-table-column show-overflow-tooltip
+                                         :prop="items.headKey" :key='index' v-for='(items , index) in column'
+                                         :label="items.headName" :align="items.align">
+                            <template slot-scope="scope"><p>{{scope.row[items.headKey]}}</p></template>
+                        </el-table-column>
+
+                        <el-table-column label="操作" width="230px;">
+                            <template slot-scope="scope">
+                                <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                                <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+                </div>
+                <div class="block">
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="page.pageNum"
+                            :page-sizes="[10, 20, 50, 100,1000]"
+                            :page-size="page.pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="page.total">
+                    </el-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script src="../js/jquery.min.js?v=2.1.4"></script>
+<script src="../js/bootstrap.min.js?v=3.3.6"></script>
+
+<!-- Peity -->
+<script src="../js/plugins/peity/jquery.peity.min.js"></script>
+<!-- jqGrid -->
+<script src="../js/plugins/jqgrid/i18n/grid.locale-cn.js?0820"></script>
+<script src="../js/plugins/jqgrid/jquery.jqGrid.min.js?0820"></script>
+<!-- 自定义js -->
+<script src="../js/content.js?v=1.0.0"></script>
+
+<script src="../js/vue.min.js"></script>
+<script src="https://unpkg.com/element-ui@2.12.0/lib/index.js"></script>
+
+<!-- Page-Level Scripts -->
+<script>
+    var app = new Vue({
+        //使用ID绑定上方某div块
+        el: '#app',
+
+        //下方都是数据
+        data: {
+
+
+            loading: false,
+
+
+            algList:[],
+
+
+            filter: {
+                roleTypeName:''
+            },
+
+
+            page: {
+                pageNum: 1, pageSize: 20, total: 0
+            },
+
+
+            tableData: [],
+
+
+            column: [
+                {headName: '角色id', headKey: 'id', width: '100px'},
+                {headName: '角色类型', headKey: 'roleTypeName', width: '200px'},
+                {headName: '描述', headKey: 'roleDescribe', width: '300px'},
+                {headName: '登录时间', headKey: 'loginTime', width: '200px'},
+                {headName: '修改时间', headKey: 'updateTime', width: '200px'},
+                {headName: '创建时间', headKey: 'createTime', width: '200px'}
+            ],
+
+
+        },
+
+
+
+        methods: {
+
+
+
+            // 分页handleSizeChange handleCurrentChange handleCurrentPage
+            handleSizeChange (size) {
+                this.page.pageSize = size;
+                this.reloadTableData();
+            },
+
+
+
+            handleCurrentChange (page) {
+                this.page.pageNum = page;
+                this.reloadTableData();
+            },
+
+
+
+            // 查询过滤
+            handleFilter() {
+                this.reloadTableData();
+            },
+
+
+
+            // 查询数据
+            reloadTableData() {
+                this.loading = true;
+
+                let filter = Object.assign({}, this.filter);
+                for (let k in filter) {
+                    if (!filter[k]) delete filter[k]
+                }
+                let reqData = {"page": JSON.stringify(this.page), "filter": JSON.stringify(filter)};
+                _this = this;
+                // url从content.js文件获得
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:8080/roleController/findRole',
+                    contentType: "application/json;charset=UTF-8",
+                    data: reqData,
+                    dataType: 'json',
+                    //成功后执行
+                    success: function (res) {
+                        _this.tableData = res.data.page.content;
+                        console.log(res);
+                        _this.page.total = parseInt(res.data.page.totalElements);
+                        _this.loading = false;
+                    },
+                    error: function () {
+                        _this.loading = false;
+                    }
+                })
+            },
+
+
+
+            // 重置
+            handleReset(){
+                this.filter.roleTypeName = '';
+            },
+
+
+
+            // 新增
+            handleAdd(){
+                window.location.href = "./addRole.html";
+            },
+
+
+
+            //删除
+            handleDelete(index, row) {
+                var id = row.id;
+                this.$confirm('确认删除, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                }).then(() => {
+                    $.ajax({
+                    type: 'POST',
+                    //url从content.js文件获得
+                    url: 'http://localhost:8080/roleController/deleteRoleById/' + id,
+                    contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data)
+                        _this.reloadTableData();
+                        _this.$message({
+                            type: 'success',
+                            message: '成功!'
+                        });
+                    },
+                    error: function (xhr, textStatus, data) {
+                        $("#error").html(data.responseText);
+                        alert("失败 请看自己的网络是否顺畅 或 请联系管理员")
+                    }
+                })
+            }).catch(() => {
+                    this.$message({
+                    type: 'info',
+                    message: '已取消增加'
+                });
+            });
+            },
+
+
+
+            // 修改
+            handleEdit (index, row){
+                //存入本地名为‘data’的数据库
+                localStorage.setItem('data',JSON.stringify(row));
+                window.location.href="./updateRole.html";
+            }
+
+
+
+        },
+
+
+
+        //1.初始化调用方法，目的是从通过接口从数据库调入原始选项数据
+        mounted() {
+            this.reloadTableData();
+        }
+
+
+
+    })
+
+
+
+</script>
+
+
+</div>
+</div>
+</body>
+<style type="text/css">
+    /* 防止pre撑破网页 */
+    pre.pre-show-style {
+        overflow-y: scroll;
+        overflow: auto;
+        overflow-x: hidden;
+        white-space: pre-wrap; /* css-3 */
+        white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+        white-space: -pre-wrap; /* Opera 4-6 */
+        white-space: -o-pre-wrap; /* Opera 7 */
+        word-wrap: break-word; /* Internet Explorer 5.5+ */
+        background: #303133;
+        color: white;
+        border: 0px;
+    }
+</style>
+</html>

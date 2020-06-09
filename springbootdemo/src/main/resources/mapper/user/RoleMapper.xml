@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.repository.user.RoleRepository">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.demo.model.user.Roleinfo" id="RoleMap">
+        <id column="id" property="id"/>
+        <result column="role_type_name" property="roleTypeName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="login_time" property="loginTime"/>
+        <result column="role_describe" property="roleDescribe"/>
+    </resultMap>
+
+    <!--条件查询-->
+    <sql id="roleWhere">
+       <where>
+           <!-- 角色类型模糊查询 -->
+           <if test="roleTypeName != null and roleTypeName != ''">
+               role_type_name like concat('%', #{roleTypeName} ,'%')
+           </if>
+       </where>
+    </sql>
+
+    <!--查询总条数-->
+    <select id="findRoleCount" resultType="java.lang.Long">
+        select count(*) from ai_role
+        <include refid="roleWhere"></include>
+    </select>
+
+    <!--获取分页列表-->
+    <select id="findRole" resultType="java.util.List" resultMap="RoleMap" parameterType="com.demo.model.user.Roleinfo">
+        select t.* from (
+            select * from ai_role
+            <include refid="roleWhere"></include>
+        ) t limit #{startPos}, #{pageSize}
+    </select>
+
+    <!--新增-->
+    <insert id="addRole" parameterType="com.demo.model.user.Roleinfo">
+        insert into ai_role(role_type_name, create_time, update_time, login_time, role_describe)
+		values(#{roleTypeName}, #{createTime}, #{updateTime}, #{loginTime}, #{roleDescribe})
+    </insert>
+
+    <!--单个删除-->
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from ai_role where id=#{id}
+    </delete>
+</mapper>
