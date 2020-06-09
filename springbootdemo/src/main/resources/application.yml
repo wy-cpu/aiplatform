@@ -30,7 +30,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/test?useCompression=true&useServerPrepStmts=false&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&characterEncoding=UTF-8
     username: root
-    password: root
+    password: 1234567
 
   # jpa的相关配置
   jpa:
