@@ -30,7 +30,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/test?useCompression=true&useServerPrepStmts=false&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&characterEncoding=UTF-8
     username: root
-    password: 1234567
+    password: root
 
   # jpa的相关配置
   jpa:
@@ -64,6 +64,7 @@ spring:
     timeBetweenEvictionRunsMillis: 300000
     # 是否在从池中取出连接前进行检验,如果检验失败,则从池中去除连接并尝试取出另一个
     testOnBorrow: true
+
     # 在空闲时检查有效性
     testWhileIdle: false
     # 数据库
