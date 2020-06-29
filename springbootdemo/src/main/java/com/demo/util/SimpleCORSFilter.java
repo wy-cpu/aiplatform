@@ -10,7 +10,7 @@ public class SimpleCORSFilter extends WebMvcConfigurationSupport{
      * SpringBoot跨域问题
      * @param registry
      */
-    @Override
+   /* @Override
     public void addCorsMappings(CorsRegistry registry) {
         System.out.println("+++++++++++++++ addCorsMappings ++++++++++++++");
         // 所有请求，也可配置成特定请求，如/api/**
@@ -21,7 +21,7 @@ public class SimpleCORSFilter extends WebMvcConfigurationSupport{
                 // 所有方法，GET、POST、PUT等
                 .allowedMethods("GET", "POST", "DELETE", "PUT")
                 .maxAge(3600);
-    }
+    }*/
 
     /***
      * springboot默认页面跳转配置

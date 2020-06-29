@@ -213,6 +213,11 @@
                     posterPath:this.form.posterPath
                 };
 
+                alert(reqData)
+                alert(JSON.stringify(reqData))
+                console.log(reqData)
+                console.log(JSON.stringify(reqData))
+
                 $.ajax({
                     type: 'POST',
                     //url从content.js文件获得

@@ -166,4 +166,9 @@ public class MovieController {
         }
         return webMessage.put("success", "删除成功");
     }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public String test (){
+       return "成功";
+    }
 }
